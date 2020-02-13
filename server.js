@@ -4,6 +4,7 @@ const puppeteer = require('puppeteer');
 const cors = require('cors');
 
 const app = express();
+app.use('/', express.static('./client/dist'));
 app.use(express.json());
 app.use(cors());
 const endpoint = `https://stagemarkt.nl/Zoeken/Home/Resultaten`; 
