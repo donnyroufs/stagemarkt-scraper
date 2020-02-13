@@ -1,1 +1,1 @@
-web: npm run build --prefix client && nodemon server.js
+web: nodemon server.js
