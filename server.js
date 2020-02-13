@@ -100,7 +100,6 @@ const getDetails = async (_companies, _crebo) => {
 };
 
 app.post("/companies", async (req, res) => {
-  console.log("req incoming");
   try {
     const { education, radius, zip, country } = req.body._data;
     const companies = await getCompanies(education, radius, zip, country);

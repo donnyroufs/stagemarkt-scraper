@@ -1,25 +1,24 @@
 <template>
   <div id="app">
     <header>
-      <h1 class="logo">
-        Stagemarkt - Scraper
-      </h1>
+      <h1 class="logo">Stagemarkt - Scraper</h1>
       <Search v-on:find-companies="findCompanies" />
     </header>
     <main v-bind:class="{ flexCenter: loading }">
       <DotLoader color="#fc5130" v-if="loading" />
+      <span v-else-if="!loading && error.length > 1">{{ error }}</span>
       <Table v-bind:data="searchResults" v-else />
     </main>
   </div>
 </template>
 
 <script>
-import Search from "./components/Search";
-import Table from "./components/Table";
-import { DotLoader } from "@saeris/vue-spinners";
+import Search from './components/Search';
+import Table from './components/Table';
+import { DotLoader } from '@saeris/vue-spinners';
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
     Search,
     Table,
@@ -28,27 +27,38 @@ export default {
   data: function() {
     return {
       searchResults: [],
-      loading: false
+      loading: false,
+      error: ''
     };
   },
   methods: {
     findCompanies: async function(_data) {
-      this.loading = true;
-      const res = await fetch("/companies", {
-        method: "POST",
-        body: JSON.stringify({ _data }),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
-      const data = await res.json();
-      // Filter body based on language
+      try {
+        this.error = '';
+        this.loading = true;
+        const res = await fetch('/companies', {
+          method: 'POST',
+          body: JSON.stringify({ _data }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        const data = await res.json();
+        // Filter body based on language
+        this.filterBody(data, _data);
+        this.loading = false;
+      } catch (err) {
+        this.error = 'Er ging iets fout...';
+        this.loading = false;
+        console.error({ msg: this.error });
+      }
+    },
+    filterBody: async function(data, _data) {
       this.searchResults =
         data.details.filter(({ body }) => {
           if (body === undefined || body == null) return;
-          return body.includes(_data.language);
+          return body.toLowerCase().includes(_data.language.toLowerCase());
         }) || [];
-      this.loading = false;
     }
   }
 };
