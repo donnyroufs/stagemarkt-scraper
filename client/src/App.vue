@@ -14,12 +14,12 @@
 </template>
 
 <script>
-import Search from './components/Search';
-import Table from './components/Table';
-import { DotLoader } from '@saeris/vue-spinners';
+import Search from "./components/Search";
+import Table from "./components/Table";
+import { DotLoader } from "@saeris/vue-spinners";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     Search,
     Table,
@@ -34,11 +34,11 @@ export default {
   methods: {
     findCompanies: async function(_data) {
       this.loading = true;
-      const res = await fetch('https://stagemarkt.herokuapp.com/companies', {
-        method: 'POST',
+      const res = await fetch("http://stagemarkt.herokuapp.com/companies", {
+        method: "POST",
         body: JSON.stringify({ _data }),
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json"
         }
       });
       const data = await res.json();
@@ -97,5 +97,11 @@ main {
 }
 .logo {
   color: #e0fbfc;
+}
+
+@media screen and (max-width: 768px) {
+  .header {
+    flex-flow: column nowrap;
+  }
 }
 </style>
