@@ -101,4 +101,4 @@ app.post('/companies', async (req, res) => {
 });
 
 
-app.listen(process.env.SV_PORT, () => console.log(`Server running on port: ${process.env.SV_PORT}!`))
+app.listen(process.env.PORT, () => console.log(`Server running on port: ${process.env.SV_PORT}!`))
