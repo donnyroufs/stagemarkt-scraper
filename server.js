@@ -15,7 +15,7 @@ const crebo = "25604";
 
 const getCompanies = async (_education, _radius, _zip, _country) => {
   const requestUrl = `${endpoint}?t=${_education}&p=${_zip}&s=${_radius}&l=${_country}`;
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
   const page = await browser.newPage();
 
   const data = [];
@@ -54,7 +54,7 @@ const getCompanies = async (_education, _radius, _zip, _country) => {
 };
 
 const getDetails = async (_companies, _crebo) => {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
   const page = await browser.newPage();
   const data = [];
   const pages = _companies.length;
