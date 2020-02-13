@@ -6,20 +6,15 @@
       type="text"
       v-model="language"
     />
-    <input
-      class="form__input"
-      placeholder="25187*"
-      type="text"
-      v-model="education"
-    />
+    <input class="form__input" placeholder="25187*" type="text" v-model="education" />
     <input class="form__input" placeholder="Postcode" v-model="zip" />
     <select class="form__input" v-model="radius">
       <option value>0</option>
       <option value="5">5</option>
       <option value="10">10</option>
       <option value="15">15</option>
-      <option value="15">20</option>
-      <option value="15">25+</option>
+      <option value="20">20</option>
+      <option value="25">25+</option>
     </select>
     <button class="btn btn--primary">search</button>
   </form>
@@ -27,21 +22,21 @@
 
 <script>
 export default {
-  name: 'Search',
+  name: "Search",
   components: {},
   data: function() {
     return {
-      language: '',
-      education: '25187',
-      radius: '',
-      zip: '',
-      country: 'Nederland'
+      language: "",
+      education: "25187",
+      radius: "",
+      zip: "",
+      country: "Nederland"
     };
   },
   methods: {
     findCompanies: async function(e) {
       e.preventDefault();
-      this.$emit('find-companies', {
+      this.$emit("find-companies", {
         language: this.language,
         education: this.education,
         radius: this.radius,
@@ -51,9 +46,9 @@ export default {
       this.clearInputs();
     },
     clearInputs: function() {
-      this.language = '';
-      this.radius = '';
-      this.zip = '';
+      this.language = "";
+      this.radius = "";
+      this.zip = "";
     }
   }
 };
