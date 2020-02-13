@@ -98,9 +98,6 @@ const getDetails = async (_companies, _crebo) => {
     console.error(err);
   }
 };
-app.get("/companies", (req, res) => {
-  res.send("api");
-});
 
 app.post("/companies", async (req, res) => {
   console.log("req incoming");

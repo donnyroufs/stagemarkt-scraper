@@ -34,7 +34,7 @@ export default {
   methods: {
     findCompanies: async function(_data) {
       this.loading = true;
-      const res = await fetch("http://stagemarkt.herokuapp.com/companies", {
+      const res = await fetch("/companies", {
         method: "POST",
         body: JSON.stringify({ _data }),
         headers: {
@@ -100,7 +100,7 @@ main {
 }
 
 @media screen and (max-width: 768px) {
-  .header {
+  header {
     flex-flow: column nowrap;
   }
 }
