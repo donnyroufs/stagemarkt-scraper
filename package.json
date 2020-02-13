@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "npm run build --prefix client && nodemon server.js",
-    "build": ""
+    "dev": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
