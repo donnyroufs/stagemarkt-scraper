@@ -34,7 +34,7 @@ export default {
   methods: {
     findCompanies: async function(_data) {
       this.loading = true;
-      const res = await fetch('http://localhost:3000/companies', {
+      const res = await fetch('https://stagemarkt.herokuapp.com/companies', {
         method: 'POST',
         body: JSON.stringify({ _data }),
         headers: {
