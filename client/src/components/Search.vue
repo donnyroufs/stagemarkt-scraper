@@ -6,37 +6,51 @@
       type="text"
       v-model="language"
     />
-    <input class="form__input" placeholder="25187*" type="text" v-model="education" />
+    <input
+      class="form__input"
+      placeholder="25187*"
+      type="text"
+      v-model="education"
+    />
     <input class="form__input" placeholder="Postcode" v-model="zip" />
     <select class="form__input" v-model="radius">
-      <option value>0</option>
-      <option value="5">5</option>
+      <option value="5" selected="selected">5</option>
       <option value="10">10</option>
       <option value="15">15</option>
       <option value="20">20</option>
       <option value="25">25+</option>
     </select>
-    <button class="btn btn--primary">search</button>
+    <button class="btn btn--primary">
+      {{ error ? 'Vul alle velden in' : 'Zoeken' }}
+    </button>
   </form>
 </template>
 
 <script>
 export default {
-  name: "Search",
+  name: 'Search',
   components: {},
   data: function() {
     return {
-      language: "",
-      education: "25187",
-      radius: "",
-      zip: "",
-      country: "Nederland"
+      language: '',
+      education: '25187',
+      radius: '5',
+      zip: '',
+      country: 'Nederland',
+      error: false
     };
   },
   methods: {
     findCompanies: async function(e) {
       e.preventDefault();
-      this.$emit("find-companies", {
+      const valid = this.validateInputs();
+
+      if (!valid) {
+        return (this.error = true);
+      }
+      this.error = false;
+
+      this.$emit('find-companies', {
         language: this.language,
         education: this.education,
         radius: this.radius,
@@ -46,9 +60,19 @@ export default {
       this.clearInputs();
     },
     clearInputs: function() {
-      this.language = "";
-      this.radius = "";
-      this.zip = "";
+      // For now keep everything there except language.
+      this.language = '';
+    },
+    validateInputs: function() {
+      if (
+        this.language.length <= 0 ||
+        this.education.length <= 0 ||
+        this.radius.length <= 0 ||
+        this.zip.length <= 0
+      ) {
+        return false;
+      }
+      return true;
     }
   }
 };

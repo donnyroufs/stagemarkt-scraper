@@ -5,7 +5,7 @@
       <Search v-on:find-companies="findCompanies" />
     </header>
     <main v-bind:class="{ flexCenter: loading }">
-      <DotLoader color="#fc5130" v-if="loading" />
+      <Progress v-if="loading" />
       <span v-else-if="!loading && error.length > 1">{{ error }}</span>
       <Table v-bind:data="searchResults" v-else />
     </main>
@@ -15,17 +15,18 @@
 <script>
 import Search from './components/Search';
 import Table from './components/Table';
-import { DotLoader } from '@saeris/vue-spinners';
+import Progress from './components/Progress';
 
 export default {
   name: 'App',
   components: {
     Search,
     Table,
-    DotLoader
+    Progress
   },
-  data: function() {
+  data: () => {
     return {
+      apiUrl: process.env.VUE_APP_API_URL,
       searchResults: [],
       loading: false,
       error: ''
@@ -36,7 +37,7 @@ export default {
       try {
         this.error = '';
         this.loading = true;
-        const res = await fetch('/companies', {
+        const res = await fetch(`${this.apiUrl}/companies`, {
           method: 'POST',
           body: JSON.stringify({ _data }),
           headers: {

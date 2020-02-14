@@ -5,7 +5,6 @@ const cors = require("cors");
 
 const app = express();
 
-app.use(express.static("./client/dist"));
 app.use(express.json());
 app.use(cors());
 
@@ -83,7 +82,6 @@ const getDetails = async (_companies, _crebo) => {
             .filter(arr => arr != null)
         );
 
-        // 27
         data.push({
           id: _companies[i][x],
           name: companyName,
@@ -112,9 +110,14 @@ app.post("/companies", async (req, res) => {
   }
 });
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
-});
+
+if(process.env.NODE_ENV === 'production') {
+  app.use(express.static("./client/dist"));
+  
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
+  });
+}
 
 const PORT = process.env.PORT || 8080;
 
