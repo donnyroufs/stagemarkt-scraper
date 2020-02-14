@@ -1,17 +1,6 @@
 <template>
   <form class="form" @submit="findCompanies">
-    <input
-      class="form__input"
-      placeholder="Voorkeur programmeertaal*"
-      type="text"
-      v-model="language"
-    />
-    <input
-      class="form__input"
-      placeholder="25187*"
-      type="text"
-      v-model="education"
-    />
+    <input class="form__input" placeholder="Criteria*" type="text" v-model="language" />
     <input class="form__input" placeholder="Postcode" v-model="zip" />
     <select class="form__input" v-model="radius">
       <option value="5" selected="selected">5</option>
@@ -20,23 +9,21 @@
       <option value="20">20</option>
       <option value="25">25+</option>
     </select>
-    <button class="btn btn--primary">
-      {{ error ? 'Vul alle velden in' : 'Zoeken' }}
-    </button>
+    <button class="btn btn--primary">{{ error ? 'Vul alle velden in' : 'Zoeken' }}</button>
   </form>
 </template>
 
 <script>
 export default {
-  name: 'Search',
+  name: "Search",
   components: {},
   data: function() {
     return {
-      language: '',
-      education: '25187',
-      radius: '5',
-      zip: '',
-      country: 'Nederland',
+      language: "",
+      education: "25187",
+      radius: "5",
+      zip: "",
+      country: "Nederland",
       error: false
     };
   },
@@ -50,7 +37,7 @@ export default {
       }
       this.error = false;
 
-      this.$emit('find-companies', {
+      this.$emit("find-companies", {
         language: this.language,
         education: this.education,
         radius: this.radius,
@@ -61,12 +48,11 @@ export default {
     },
     clearInputs: function() {
       // For now keep everything there except language.
-      this.language = '';
+      this.language = "";
     },
     validateInputs: function() {
       if (
         this.language.length <= 0 ||
-        this.education.length <= 0 ||
         this.radius.length <= 0 ||
         this.zip.length <= 0
       ) {

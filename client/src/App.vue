@@ -1,7 +1,10 @@
 <template>
   <div id="app">
     <header>
-      <h1 class="logo">Stagemarkt - Scraper</h1>
+      <div>
+        <h1 class="logo">StagemarktScraper</h1>
+        <p class="subtitle">Vind een A.O stageplek op voorkeur!</p>
+      </div>
       <Search v-on:find-companies="findCompanies" />
     </header>
     <main v-bind:class="{ flexCenter: loading }">
@@ -13,12 +16,12 @@
 </template>
 
 <script>
-import Search from './components/Search';
-import Table from './components/Table';
-import Progress from './components/Progress';
+import Search from "./components/Search";
+import Table from "./components/Table";
+import Progress from "./components/Progress";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     Search,
     Table,
@@ -29,19 +32,19 @@ export default {
       apiUrl: process.env.VUE_APP_API_URL,
       searchResults: [],
       loading: false,
-      error: ''
+      error: ""
     };
   },
   methods: {
     findCompanies: async function(_data) {
       try {
-        this.error = '';
+        this.error = "";
         this.loading = true;
         const res = await fetch(`${this.apiUrl}/companies`, {
-          method: 'POST',
+          method: "POST",
           body: JSON.stringify({ _data }),
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json"
           }
         });
         const data = await res.json();
@@ -49,7 +52,7 @@ export default {
         this.filterBody(data, _data);
         this.loading = false;
       } catch (err) {
-        this.error = 'Er ging iets fout...';
+        this.error = "Er ging iets fout...";
         this.loading = false;
         console.error({ msg: this.error });
       }
@@ -108,6 +111,16 @@ main {
 }
 .logo {
   color: #e0fbfc;
+  padding-bottom: 0.3rem;
+  margin-bottom: 0;
+}
+
+.subtitle {
+  margin: 0;
+  padding: 0;
+  color: white;
+  opacity: 0.7;
+  font-size: 0.95rem;
 }
 
 @media screen and (max-width: 768px) {
