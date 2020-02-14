@@ -1,12 +1,12 @@
 <template>
   <div class="flex">
     <DotLoader color="#fc5130" />
-    <p>{{ entries }} applicaties aan het doorzoeken.</p>
+    <p>Applicaties aan het doorzoeken...</p>
   </div>
 </template>
 
 <script>
-import { DotLoader } from '@saeris/vue-spinners';
+import { DotLoader } from "@saeris/vue-spinners";
 
 export default {
   components: {
