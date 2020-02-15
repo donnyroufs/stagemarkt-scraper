@@ -1,6 +1,6 @@
 <template>
   <form class="form" @submit="findCompanies">
-    <input class="form__input" placeholder="Criteria*" type="text" v-model="language" />
+    <input class="form__input" placeholder="Zoekterm" type="text" v-model="language" />
     <input class="form__input" placeholder="Postcode" v-model="zip" />
     <select class="form__input" v-model="radius">
       <option value="5" selected="selected">5</option>

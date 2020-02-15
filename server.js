@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const puppeteer = require("puppeteer");
 const cors = require("cors");
+const uuid = require('uuid');
 
 const app = express();
 
@@ -32,8 +33,6 @@ const getCompanies = async (_education, _radius, _zip, _country) => {
           ].map(elem => elem.dataset.leerbedrijfid)
         )
       );
-      count++;
-
       // Check if there are more pages
       const button = await page.evaluate(
         () => document.querySelector(`[aria-label='volgende']`).innerText
@@ -47,12 +46,13 @@ const getCompanies = async (_education, _radius, _zip, _country) => {
     } catch (err) {
       // Incase something went wrong, just return the data.
       await browser.close();
-      return data;
+      const sum = data.reduce((acc, curr) => acc + curr.length, 0)
+      return [data, sum];
     }
   }
 };
 
-const getDetails = async (_companies, _crebo) => {
+const getDetails = async (_companies, _crebo, pollId, entries) => {
   const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
   const page = await browser.newPage();
   const data = [];
@@ -82,6 +82,12 @@ const getDetails = async (_companies, _crebo) => {
             .filter(arr => arr != null)
         );
 
+        // @TODO: id
+        updatePoll(1, {
+          current: data.length,
+          entries,
+        });
+
         data.push({
           id: _companies[i][x],
           name: companyName,
@@ -97,17 +103,70 @@ const getDetails = async (_companies, _crebo) => {
   }
 };
 
+
+function Poll(id, data) {
+  this.id = id;
+  this.entries = data;
+}
+
+const createPoll = (entries) => {
+  const id = uuid.v4();
+  pollingData.push(new Poll(1, {
+    current: 0,
+    entries,
+  }));
+
+  return id;
+};
+
+const updatePoll = (pollId, data) => {
+  pollingData.map(poll => poll.id === pollId ? poll.entries = data : poll.entries);
+};
+
+const getPollProgress = (pollId) => {
+  const progress = pollingData.find(poll => poll.id === pollId);
+  return progress;
+}
+
+const pollingData = [];
+
 app.post("/companies", async (req, res) => {
   try {
     const { education, radius, zip, country } = req.body._data;
-    const companies = await getCompanies(education, radius, zip, country);
-    const details = await getDetails(companies, education);
+    const [companies, entries] = await getCompanies(education, radius, zip, country);
+    const pollId = createPoll(entries);
+    // Start scraping the data, we won't be returning it in this endpoint!
+    getDetails(companies, education, pollId, entries);
     res.json({
-      details
+      progress: getPollProgress(1),
     });
   } catch (err) {
     console.error(err);
   }
+});
+
+app.get('/companies/:id', async (req, res) => { 
+  try {
+    // Client sends PollID
+    const { id } = req.params;
+    // Find poll data
+    const data = pollingData.find(poll => poll.id === 1);
+    // Show current progress
+    res.json({
+      data,
+    }) 
+  } catch(err) {
+    console.error(err);
+  }
+});
+
+app.get('/poll/:id', (req, res) => {
+  // @TODO: id
+
+  const { id } = req.params;
+  res.json({
+    progress: getPollProgress(1),
+  });
 });
 
 

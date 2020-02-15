@@ -100,8 +100,6 @@ header {
   cursor: pointer;
 }
 
-main {
-}
 .flexCenter {
   display: flex;
   justify-content: center;
