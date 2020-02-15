@@ -9,14 +9,24 @@
       <option value="20">20</option>
       <option value="25">25+</option>
     </select>
-    <button class="btn btn--primary">{{ error ? 'Vul alle velden in' : 'Zoeken' }}</button>
+    <button class="btn btn--searching" v-if="filtering" disabled>
+      <PulseLoader color="#fff" v-if="filtering" size="6" sizeUnit="px" />
+    </button>
+    <button class="btn btn--primary" v-else>{{ error ? 'Vul alle velden in' : 'Zoeken' }}</button>
   </form>
 </template>
 
 <script>
+import { PulseLoader } from "@saeris/vue-spinners";
+
 export default {
   name: "Search",
-  components: {},
+  components: {
+    PulseLoader
+  },
+  props: {
+    filtering: Boolean
+  },
   data: function() {
     return {
       language: "",
@@ -81,7 +91,10 @@ export default {
 option {
   color: #3d5a80;
 }
-
+.btn--searching {
+  background: #a73721;
+  cursor: default;
+}
 @media screen and (max-width: 768px) {
   * {
     box-sizing: border-box;

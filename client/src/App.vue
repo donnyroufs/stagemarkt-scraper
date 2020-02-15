@@ -5,12 +5,12 @@
         <h1 class="logo">StagemarktScraper</h1>
         <p class="subtitle">Vind een A.O stageplek op voorkeur!</p>
       </div>
-      <Search v-on:find-companies="findCompanies" />
+      <Search v-on:find-companies="findCompanies" v-bind:filtering="filtering" />
     </header>
     <main v-bind:class="{ flexCenter: loading }">
       <Progress v-if="loading" />
       <span v-else-if="!loading && error.length > 1">{{ error }}</span>
-      <Table v-bind:data="searchResults" v-else />
+      <Table v-bind:data="data" v-bind:language="language" v-else />
     </main>
   </div>
 </template>
@@ -29,17 +29,23 @@ export default {
   },
   data: () => {
     return {
+      data: null,
       apiUrl: process.env.VUE_APP_API_URL,
-      searchResults: [],
       loading: false,
-      error: ""
+      filtering: false,
+      error: "",
+      progress: null,
+      timeoutId: null,
+      language: ""
     };
   },
   methods: {
     findCompanies: async function(_data) {
       try {
         this.error = "";
+        this.language = _data.language;
         this.loading = true;
+        // This will start the scraping process and give me a progress id to refer too.
         const res = await fetch(`${this.apiUrl}/companies`, {
           method: "POST",
           body: JSON.stringify({ _data }),
@@ -47,26 +53,45 @@ export default {
             "Content-Type": "application/json"
           }
         });
-        const data = await res.json();
-        // Filter body based on language
-        this.filterBody(data, _data);
+        // Find all applications
+        const { progress } = await res.json();
+        this.progress = progress;
         this.loading = false;
+        // Filter based on our critera
+        this.filtering = true; // Wil be used for search button indicator
+        await this.getFilteredEntries();
+
+        // Grabs entries based on education
+        // const res2 = await fetch(`${this.apiUrl}/companies/${progress.id}`, {
+        //   method: "GET"
+        // });
+        // const data = await res2.json();
+        // // Filter body based on language
+        // this.filterBody(data, _data);
+        // this.loading = false;
       } catch (err) {
         this.error = "Er ging iets fout...";
         this.loading = false;
         console.error({ msg: this.error });
       }
     },
-    filterBody: async function(data, _data) {
-      this.searchResults =
-        data.details.filter(({ body }) => {
-          if (body === undefined || body == null) return;
-          return body.toLowerCase().includes(_data.language.toLowerCase());
-        }) || [];
+    getFilteredEntries: async function() {
+      this.timeoutId = setTimeout(async () => {
+        const res = await fetch(`${this.apiUrl}/poll/${this.progress.id}`);
+        const data = await res.json();
+        this.data = data;
+        if (this.data.finished) {
+          clearTimeout(this.timeoutId);
+          return (this.filtering = false);
+        }
+        await this.getFilteredEntries();
+      }, 500);
     }
   }
 };
 </script>
+
+
 
 <style>
 body {

@@ -65,7 +65,9 @@ const getDetails = async (_companies, _crebo, pollId, entries) => {
         const companyName = await page.evaluate(
           () => document.querySelector(`#leerbedrijfNaam`).innerText
         );
-
+        
+        // @WISHLIST: Remove static crebos, so that it can be used for every study.
+        // Get based on education. 
         const education = await page.evaluate(() =>
           [...document.querySelectorAll(`.crebo`)]
             .map(item => {
@@ -82,19 +84,29 @@ const getDetails = async (_companies, _crebo, pollId, entries) => {
             .filter(arr => arr != null)
         );
 
-        // @TODO: id
-        updatePoll(1, {
-          current: data.length,
-          entries,
-        });
-
+        // @TODO: Handle filtering based on criteria here, instead of clientside.
+        
         data.push({
           id: _companies[i][x],
           name: companyName,
           body: education[0]
         });
+
+
+        updatePoll(pollId, {
+          finished: false,
+          current: data.length,
+          entries,
+          data,
+        });
       }
     }
+    updatePoll(pollId, {
+      finished: true,
+      current: data.length,
+      entries,
+      data,
+    });
     await browser.close();
     return data;
   } catch (err) {
@@ -111,9 +123,11 @@ function Poll(id, data) {
 
 const createPoll = (entries) => {
   const id = uuid.v4();
-  pollingData.push(new Poll(1, {
+  pollingData.push(new Poll(id, {
+    finished: false,
     current: 0,
     entries,
+    data: null,
   }));
 
   return id;
@@ -138,7 +152,7 @@ app.post("/companies", async (req, res) => {
     // Start scraping the data, we won't be returning it in this endpoint!
     getDetails(companies, education, pollId, entries);
     res.json({
-      progress: getPollProgress(1),
+      progress: getPollProgress(pollId),
     });
   } catch (err) {
     console.error(err);
@@ -150,7 +164,13 @@ app.get('/companies/:id', async (req, res) => {
     // Client sends PollID
     const { id } = req.params;
     // Find poll data
-    const data = pollingData.find(poll => poll.id === 1);
+    const data = pollingData.find(poll => poll.id === id);
+    // If not polling data exists with that id
+    if(data == null || data === undefined) {
+      res.status(404).json({
+        data: null,
+      });
+    }
     // Show current progress
     res.json({
       data,
@@ -161,11 +181,14 @@ app.get('/companies/:id', async (req, res) => {
 });
 
 app.get('/poll/:id', (req, res) => {
-  // @TODO: id
-
   const { id } = req.params;
+
+  const pollData = getPollProgress(id);
+  const data = pollData.entries.data || [];
+  const finished = pollData.entries.finished;
   res.json({
-    progress: getPollProgress(1),
+    finished,
+    progress: data,
   });
 });
 
