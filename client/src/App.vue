@@ -5,7 +5,10 @@
         <h1 class="logo">StagemarktScraper</h1>
         <p class="subtitle">Vind een A.O stageplek op voorkeur!</p>
       </div>
-      <Search v-on:find-companies="findCompanies" v-bind:filtering="filtering" />
+      <Search
+        v-on:find-companies="findCompanies"
+        v-bind:filtering="filtering"
+      />
     </header>
     <main v-bind:class="{ flexCenter: loading }">
       <Progress v-if="loading" />
@@ -16,12 +19,12 @@
 </template>
 
 <script>
-import Search from "./components/Search";
-import Table from "./components/Table";
-import Progress from "./components/Progress";
+import Search from './components/Search';
+import Table from './components/Table';
+import Progress from './components/Progress';
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
     Search,
     Table,
@@ -33,24 +36,24 @@ export default {
       apiUrl: process.env.VUE_APP_API_URL,
       loading: false,
       filtering: false,
-      error: "",
+      error: '',
       progress: null,
       timeoutId: null,
-      language: ""
+      language: ''
     };
   },
   methods: {
     findCompanies: async function(_data) {
       try {
-        this.error = "";
+        this.error = '';
         this.language = _data.language;
         this.loading = true;
         // This will start the scraping process and give me a progress id to refer too.
         const res = await fetch(`${this.apiUrl}/companies`, {
-          method: "POST",
+          method: 'POST',
           body: JSON.stringify({ _data }),
           headers: {
-            "Content-Type": "application/json"
+            'Content-Type': 'application/json'
           }
         });
         // Find all applications
@@ -58,19 +61,10 @@ export default {
         this.progress = progress;
         this.loading = false;
         // Filter based on our critera
-        this.filtering = true; // Wil be used for search button indicator
+        this.filtering = true;
         await this.getFilteredEntries();
-
-        // Grabs entries based on education
-        // const res2 = await fetch(`${this.apiUrl}/companies/${progress.id}`, {
-        //   method: "GET"
-        // });
-        // const data = await res2.json();
-        // // Filter body based on language
-        // this.filterBody(data, _data);
-        // this.loading = false;
       } catch (err) {
-        this.error = "Er ging iets fout...";
+        this.error = 'Er ging iets fout...';
         this.loading = false;
         console.error({ msg: this.error });
       }
@@ -90,8 +84,6 @@ export default {
   }
 };
 </script>
-
-
 
 <style>
 body {
